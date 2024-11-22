@@ -33,6 +33,7 @@ func runPythonTests(pytestArgs []string) error {
 		// "-s",
 		// "--log-cli-level=DEBUG",
 		"--confcutdir=.",
+		"--maxfail=1",
 		"-k", "not [file",
 	}
 	args = append(args, pytestArgs...)
