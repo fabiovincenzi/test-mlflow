@@ -28,8 +28,11 @@ func runPythonTests(pytestArgs []string) error {
 	}
 
 	args := []string{
+		"run",
+		"pytest",
 		// "-s",
 		// "--log-cli-level=DEBUG",
+		"-p no:warnings",
 		"--confcutdir=.",
 		"-k", "not [file",
 	}
@@ -46,7 +49,7 @@ func runPythonTests(pytestArgs []string) error {
 
 	//  Run the tests (currently just the server ones)
 	if err := sh.RunWithV(environmentVariables,
-		"pytest", args...,
+		"uv", args...,
 	); err != nil {
 		return err
 	}
