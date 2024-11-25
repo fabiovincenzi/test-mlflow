@@ -52,7 +52,6 @@ jobs:
       - name: Run integration tests
         run: mage test: python
         continue-on-error: true
-        if: ${{ !(matrix.python == '3.12' && matrix.runner == 'windows-latest') }}
       - name: Check memory usage after pytest
         run: free -m || vm_stat || systeminfo
         
