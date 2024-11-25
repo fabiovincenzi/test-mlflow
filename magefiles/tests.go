@@ -14,43 +14,26 @@ import (
 type Test mg.Namespace
 
 func runPythonTests(pytestArgs []string) error {
-	libpath, err := os.MkdirTemp("", "")
-	if err != nil {
-		return err
-	}
-
-	// Remove the Go binary
-	defer os.RemoveAll(libpath)
-
-	// Build the Go binary in a temporary directory
-	if err := sh.RunV("uv", "run", "-m", "mlflow_go.lib", "--", ".", libpath); err != nil {
-		return nil
-	}
-
+	// Prepara gli argomenti per pytest
 	args := []string{
-		"run",
 		"pytest",
-		// "-s",
-		// "--log-cli-level=DEBUG",
-		"-p no:warnings",
+		"-p", "no:warnings",
 		"--confcutdir=.",
 		"-k", "not [file",
 	}
 	args = append(args, pytestArgs...)
 
+	// Variabili di ambiente da esportare per i test
 	environmentVariables := map[string]string{
-		"MLFLOW_GO_LIBRARY_PATH": libpath,
-		// "PYTHONLOGGING":          "DEBUG",
+		"MLFLOW_GO_LIBRARY_PATH": ".", // Modifica se necessario
 	}
 
 	if runtime.GOOS == "windows" {
 		environmentVariables["MLFLOW_SQLALCHEMYSTORE_POOLCLASS"] = "NullPool"
 	}
 
-	//  Run the tests (currently just the server ones)
-	if err := sh.RunWithV(environmentVariables,
-		"uv", args...,
-	); err != nil {
+	// Esegui pytest direttamente
+	if err := sh.RunWithV(environmentVariables, "python3", args...); err != nil {
 		return err
 	}
 
