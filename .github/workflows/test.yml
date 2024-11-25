@@ -50,7 +50,7 @@ jobs:
       - name: Check memory usage before pytest
         run: free -m || vm_stat || systeminfo
       - name: Run integration tests
-        run: mage test: python
+        run: mage test:python
         continue-on-error: true
       - name: Check memory usage after pytest
         run: free -m || vm_stat || systeminfo
