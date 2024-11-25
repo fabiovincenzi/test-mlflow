@@ -51,8 +51,6 @@ func (Test) Python() error {
 	}, "pytest",
 		"--confcutdir=.",
 		".mlflow.repo/tests/tracking/test_rest_tracking.py",
-		"--faulthandler-timeout=30",
-		"--maxfail=1",
 		"-k",
 		"not [file",
 		// "-vv",
