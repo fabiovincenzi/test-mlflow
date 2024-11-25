@@ -4,7 +4,6 @@
 package main
 
 import (
-	"os"
 	"runtime"
 
 	"github.com/magefile/mage/mg"
