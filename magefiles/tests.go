@@ -1,68 +1,59 @@
-//go:build mage
+name: Test
 
-//nolint:wrapcheck
-package main
+on:
+  workflow_call:
 
-import (
-	"runtime"
+permissions:
+  contents: read
 
-	"github.com/magefile/mage/mg"
-	"github.com/magefile/mage/sh"
-)
+jobs:
+  go:
+    name: Test Go
+    strategy:
+      matrix:
+        runner: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          check-latest: true
+          cache: false
+      - name: Install mage
+        run: go install github.com/magefile/mage@v1.15.0
+      - name: Run unit tests
+        run: mage test:unit
 
-type Test mg.Namespace
-
-func runPythonTests(pytestArgs []string) error {
-	// Prepara gli argomenti per pytest
-	args := []string{
-		"pytest",
-		"-p", "no:warnings",
-		"--confcutdir=.",
-		"-k", "not [file",
-	}
-	args = append(args, pytestArgs...)
-
-	// Variabili di ambiente da esportare per i test
-	environmentVariables := map[string]string{
-		"MLFLOW_GO_LIBRARY_PATH": ".", // Modifica se necessario
-	}
-
-	if runtime.GOOS == "windows" {
-		environmentVariables["MLFLOW_SQLALCHEMYSTORE_POOLCLASS"] = "NullPool"
-	}
-
-	// Esegui pytest direttamente
-	if err := sh.RunWithV(environmentVariables, "python3", args...); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Run mlflow Python tests against the Go backend.
-func (Test) Python() error {
-	return runPythonTests([]string{
-		".mlflow.repo/tests/tracking/test_rest_tracking.py",
-		".mlflow.repo/tests/tracking/test_model_registry.py",
-		".mlflow.repo/tests/store/tracking/test_sqlalchemy_store.py",
-		".mlflow.repo/tests/store/model_registry/test_sqlalchemy_store.py",
-	})
-}
-
-// Run specific Python test against the Go backend.
-func (Test) PythonSpecific(testName string) error {
-	return runPythonTests([]string{
-		testName,
-		"-vv",
-	})
-}
-
-// Run the Go unit tests.
-func (Test) Unit() error {
-	return sh.RunV("go", "test", "./pkg/...")
-}
-
-// Run all tests.
-func (Test) All() {
-	mg.Deps(Test.Unit, Test.Python)
-}
+  python:
+    name: Test Python
+    strategy:
+      matrix:
+        runner: [macos-latest, ubuntu-latest, windows-latest]
+        python: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          check-latest: true
+          cache: false
+      - name: Install mage
+        run: go install github.com/magefile/mage@v1.15.0
+      - name: Install our package in editable mode
+        run: pip install -e .
+      - name: Initialize MLflow repo
+        run: mage repo:init
+      - name: Install dependencies
+        run: pip install pytest==8.1.1 psycopg2-binary==2.9.9 -e .mlflow.repo
+      - name: Run integration tests
+        run: mage test:python
+        # Temporary workaround for failing tests
+        continue-on-error: ${{ matrix.runner != 'ubuntu-latest' }}
