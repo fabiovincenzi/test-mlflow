@@ -48,10 +48,34 @@ jobs:
       - name: Install dependencies
         run: pip install pytest==8.1.1 psycopg2-binary==2.9.9 -e .mlflow.repo
       - name: Check memory usage before pytest
-        run: free -m || vm_stat || systeminfo
+        run: |
+          if command -v free > /dev/null; then
+            free -m
+          elif command -v vm_stat > /dev/null; then
+            vm_stat
+            echo "Free memory in MB:"
+            vm_stat | awk '/Pages free/ { print $3 * 4096 / 1024 / 1024 " MB" }'
+          elif command -v sysctl > /dev/null; then
+            echo "Total memory in bytes:"
+            sysctl hw.memsize
+          else
+            echo "Unable to determine memory usage on this system."
+          fi
       - name: Run integration tests
         run: mage test:python
         continue-on-error: true
       - name: Check memory usage after pytest
-        run: free -m || vm_stat || systeminfo
+        run: |
+          if command -v free > /dev/null; then
+            free -m
+          elif command -v vm_stat > /dev/null; then
+            vm_stat
+            echo "Free memory in MB:"
+            vm_stat | awk '/Pages free/ { print $3 * 4096 / 1024 / 1024 " MB" }'
+          elif command -v sysctl > /dev/null; then
+            echo "Total memory in bytes:"
+            sysctl hw.memsize
+          else
+            echo "Unable to determine memory usage on this system."
+          fi
         
