@@ -94,6 +94,7 @@ func (Test) Python() error {
 		".mlflow.repo/tests/tracking/test_rest_tracking.py",
 		"-k", "not [file",
 		"-vv",
+		"-q",
 	); err != nil {
 		return fmt.Errorf("Python tests failed: %w", err)
 	}
