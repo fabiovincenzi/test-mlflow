@@ -89,12 +89,11 @@ func (Test) Python() error {
 	testEnv := map[string]string{
 		"MLFLOW_GO_LIBRARY_PATH": libpath,
 	}
-	if err := sh.RunWithV(testEnv, "python", "-m", "pytest",
+	if err := sh.RunWithV(testEnv, "gdb --batch -ex \"run\" -ex \"bt\" --args ", "python", "-m", "pytest",
 		"--confcutdir=.",
 		".mlflow.repo/tests/tracking/test_rest_tracking.py",
-		".mlflow.repo/tests/tracking/test_model_registry.py",
-		".mlflow.repo/tests/store/tracking/test_sqlalchemy_store.py",
-		".mlflow.repo/tests/store/model_registry/test_sqlalchemy_store.py",
+	      	"--log-level=DEBUG",
+		"-v",
 		"-k", "not [file",
 	); err != nil {
 		return fmt.Errorf("Python tests failed: %w", err)
