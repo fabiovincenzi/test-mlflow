@@ -104,6 +104,7 @@ func NewDatabase(ctx context.Context, storeURL string) (*gorm.DB, error) {
 }
 
 func CloseDatabase(gormDatabase *gorm.DB) error {
+	gormDatabase.Logger.Info(gormDatabase.Statement.Context, "CLOSING")
 	database, err := gormDatabase.DB()
 	if err != nil {
 		return fmt.Errorf("error while getting database connection: %w", err)
