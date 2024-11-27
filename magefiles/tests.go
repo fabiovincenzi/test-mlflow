@@ -89,7 +89,7 @@ func (Test) Python() error {
 	testEnv := map[string]string{
 		"MLFLOW_GO_LIBRARY_PATH": libpath,
 	}
-	if err := sh.RunWithV(testEnv, "lldb --batch -o \"run\" -o \"bt\" --", "python", "-m", "pytest",
+	if err := sh.RunWithV(testEnv, "pytest",
 		"--confcutdir=.",
 		".mlflow.repo/tests/tracking/test_rest_tracking.py",
 	      	"--log-level=DEBUG",
