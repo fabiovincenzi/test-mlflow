@@ -98,7 +98,7 @@ jobs:
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-        - name: Run integration tests
+      - name: Run integration tests
         run: |
           echo "Running integration tests with mage..."
           mage test:python
@@ -202,7 +202,7 @@ jobs:
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-        - name: Run integration tests3212
+        - name: Run integration tests32123
         run: |
           echo "Running integration tests with mage..."
           mage test:python
