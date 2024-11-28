@@ -3,6 +3,7 @@ Integration test which starts a local Tracking Server on an ephemeral port,
 and ensures we can use the tracking API to communicate with it.
 """
 
+import json
 import logging
 import sys
 
@@ -11,6 +12,7 @@ from mlflow import MlflowClient
 
 from tests.tracking.integration_test_utils import (
     _init_server,
+    _send_rest_tracking_post_request,
 )
 
 _logger = logging.getLogger(__name__)
@@ -50,14 +52,22 @@ Integration test which starts a local Tracking Server on an ephemeral port,
 and ensures we can use the tracking API to communicate with it.
 """
 
+import json
 import logging
 import sys
 
 import pytest
 from mlflow import MlflowClient
+from mlflow.entities import (
+    Dataset,
+    DatasetInput,
+    InputTag,
+)
+from mlflow.utils.proto_json_utils import message_to_json
 
 from tests.tracking.integration_test_utils import (
     _init_server,
+    _send_rest_tracking_post_request,
 )
 
 _logger = logging.getLogger(__name__)
@@ -90,3 +100,41 @@ def cli_env(mlflow_client):
 
 def create_experiments(client, names):
     return [client.create_experiment(n) for n in names]
+
+
+def test_log_inputs_validation(mlflow_client):
+    experiment_id = mlflow_client.create_experiment("log inputs validation")
+    created_run = mlflow_client.create_run(experiment_id)
+    run_id = created_run.info.run_id
+
+    def assert_bad_request(payload, expected_error_message):
+        response = _send_rest_tracking_post_request(
+            mlflow_client.tracking_uri,
+            "/api/2.0/mlflow/runs/log-inputs",
+            payload,
+        )
+        assert response.status_code == 400
+        assert expected_error_message in response.text
+
+    dataset = Dataset(
+        name="name1",
+        digest="digest1",
+        source_type="source_type1",
+        source="source1",
+    )
+    tags = [InputTag(key="tag1", value="value1")]
+    dataset_inputs = [
+        json.loads(message_to_json(DatasetInput(dataset=dataset, tags=tags).to_proto()))
+    ]
+    assert_bad_request(
+        {
+            "datasets": dataset_inputs,
+        },
+        "Missing value for required parameter 'run_id'",
+    )
+    assert_bad_request(
+        {
+            "run_id": run_id,
+        },
+        "Missing value for required parameter 'datasets'",
+    )
