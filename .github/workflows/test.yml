@@ -16,10 +16,16 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
-      - uses: s-weigand/setup-conda@v1
+      - name: Install Conda
         if: matrix.runner == 'macos-13'
-        with:
-          activate-conda: false
+        run: |
+          echo "Installing Miniconda..."
+          curl -L -o miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+          chmod +x miniconda.sh
+          ./miniconda.sh -b -p $HOME/miniconda
+          echo "$HOME/miniconda/bin" >> $GITHUB_PATH
+          export PATH="$HOME/miniconda/bin:$PATH"
+          conda --version
       - name: Install uv
         uses: astral-sh/setup-uv@v3
       - name: Setup Python
@@ -57,6 +63,18 @@ jobs:
           echo "Running integration tests with mage..."
           mage test:python
       - name: Run integration tests 4
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+       - name: Run integration tests 5
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 6
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 7
         run: |
           echo "Running integration tests with mage..."
           mage test:python

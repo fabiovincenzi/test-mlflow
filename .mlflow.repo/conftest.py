@@ -1,8 +1,6 @@
 import json
 import os
 import posixpath
-import re
-import shutil
 import subprocess
 import sys
 import threading
@@ -10,9 +8,7 @@ import traceback
 
 import click
 import pytest
-
 from mlflow.environment_variables import _MLFLOW_TESTING, MLFLOW_TRACKING_URI
-from mlflow.utils.os import is_windows
 from mlflow.version import VERSION
 
 from tests.helper_functions import get_safe_port
@@ -295,28 +291,6 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
             terminalreporter.section("Remaining child processes", yellow=True)
             for idx, child in enumerate(children, start=1):
                 terminalreporter.write(f"{idx}: {child}\n")
-
-
-@pytest.fixture(scope="module", autouse=True)
-def clean_up_envs():
-    """
-    Clean up virtualenvs and conda environments created during tests to save disk space.
-    """
-    yield
-
-    if "GITHUB_ACTIONS" in os.environ:
-        from mlflow.utils.virtualenv import _get_mlflow_virtualenv_root
-
-        shutil.rmtree(_get_mlflow_virtualenv_root(), ignore_errors=True)
-        if not is_windows():
-            conda_info = json.loads(subprocess.check_output(["conda", "info", "--json"], text=True))
-            root_prefix = conda_info["root_prefix"]
-            regex = re.compile(r"mlflow-\w{32,}")
-            for env in conda_info["envs"]:
-                if env == root_prefix:
-                    continue
-                if regex.fullmatch(os.path.basename(env)):
-                    shutil.rmtree(env, ignore_errors=True)
 
 
 @pytest.fixture(scope="session", autouse=True)
