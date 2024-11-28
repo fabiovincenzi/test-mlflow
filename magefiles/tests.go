@@ -101,6 +101,7 @@ func (Test) Python() error {
 	}
 
 	if err := sh.RunWithV(testEnv, "pytest",
+		"-s",
 		"--confcutdir=.",
 		".mlflow.repo/tests/tracking/test_rest_tracking.py",
 		"-k", "not [file",

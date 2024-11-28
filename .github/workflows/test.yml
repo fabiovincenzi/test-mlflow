@@ -74,3 +74,27 @@ jobs:
         run: |
           echo "Running integration tests with mage..."
           mage test:python
+      - name: Run integration tests 7
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 8
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 9
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 10
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 11
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 12
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
