@@ -1,6 +1,5 @@
 //go:build mage
 
-//nolint:wrapcheck
 package main
 
 import (
@@ -20,9 +19,11 @@ type Test mg.Namespace
 func cleanUpMemoryFile() error {
 	filename := ":memory:"
 	_, err := os.Stat(filename)
+
 	if err == nil {
 		// Il file esiste, rimuovilo
 		log.Printf("Cleaning up memory file: %s", filename)
+
 		err = os.Remove(filename)
 		if err != nil {
 			return fmt.Errorf("failed to clean up memory file: %w", err)
@@ -30,6 +31,7 @@ func cleanUpMemoryFile() error {
 	} else if !os.IsNotExist(err) {
 		return fmt.Errorf("error checking memory file: %w", err)
 	}
+
 	return nil
 }
 
@@ -44,14 +46,17 @@ func logMemoryUsage(stage string) {
 		cmd = exec.Command("free", "-m")
 	default:
 		log.Printf("Memory usage logging is not supported on %s", runtime.GOOS)
+
 		return
 	}
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("Failed to get memory usage at stage '%s': %v", stage, err)
+
 		return
 	}
+
 	log.Printf("Memory usage at stage '%s':\n%s", stage, string(output))
 }
 
@@ -66,13 +71,16 @@ func (Test) Python() error {
 	if err != nil {
 		return fmt.Errorf("failed to create temporary directory: %w", err)
 	}
+
 	log.Printf("Temporary directory created at: %s", libpath)
 
 	defer func() {
 		log.Println("Cleaning up temporary resources...")
+
 		if err := os.RemoveAll(libpath); err != nil {
 			log.Printf("Failed to clean up temporary directory: %v", err)
 		}
+
 		if err := cleanUpMemoryFile(); err != nil {
 			log.Printf("Failed to clean up memory file: %v", err)
 		}
@@ -80,23 +88,21 @@ func (Test) Python() error {
 
 	// Build Go binary in a temporary directory
 	log.Println("Building Go binary...")
+
 	if err := sh.RunV("python", "-m", "mlflow_go.lib", ".", libpath); err != nil {
 		return fmt.Errorf("failed to build Go binary: %w", err)
 	}
 
 	// Run the tests
 	log.Println("Running Python tests...")
+
 	testEnv := map[string]string{
 		"MLFLOW_GO_LIBRARY_PATH": libpath,
 	}
+
 	if err := sh.RunWithV(testEnv, "pytest",
 		"--confcutdir=.",
 		".mlflow.repo/tests/tracking/test_rest_tracking.py",
-		".mlflow.repo/tests/tracking/test_model_registry.py",
-		".mlflow.repo/tests/store/tracking/test_sqlalchemy_store.py",
-		".mlflow.repo/tests/store/model_registry/test_sqlalchemy_store.py",
-	      	"--log-level=DEBUG",
-		"-v",
 		"-k", "not [file",
 	); err != nil {
 		return fmt.Errorf("Python tests failed: %w", err)
@@ -106,16 +112,20 @@ func (Test) Python() error {
 	logMemoryUsage("after tests")
 
 	log.Println("Python tests completed successfully.")
+
 	return nil
 }
 
 // Unit esegue i test unitari Go.
 func (Test) Unit() error {
 	log.Println("Starting Go unit tests...")
+
 	if err := sh.RunV("go", "test", "./pkg/..."); err != nil {
-		return fmt.Errorf("Go unit tests failed: %w", err)
+		return fmt.Errorf("go unit tests failed: %w", err)
 	}
+
 	log.Println("Go unit tests completed successfully.")
+
 	return nil
 }
 

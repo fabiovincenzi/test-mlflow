@@ -40,68 +40,14 @@ jobs:
           cache: false
       - name: Install mage
         run: go install github.com/magefile/mage@v1.15.0
-      - name: Initialize MLflow repo
-        run: mage repo:init
       - name: Install our package in editable mode
         run: pip install -e .
-      - name: Initialize MLflow repo
-        run: mage repo:init
       - name: Install dependencies
         run: |
           echo "Installing dependencies..."
           pip install pytest==8.1.1 psycopg2-binary==2.9.9 -e .mlflow.repo
-      - name: Check memory usage before pytest
-        run: |
-          echo "Checking memory usage before tests..."
-          if command -v free > /dev/null; then
-            free -m
-          elif command -v vm_stat > /dev/null; then
-            vm_stat
-            echo "Free memory in MB:"
-            vm_stat | awk '/Pages free/ { print $3 * 4096 / 1024 / 1024 " MB" }'
-          elif command -v sysctl > /dev/null; then
-            echo "Total memory in bytes:"
-            sysctl hw.memsize
-          else
-            echo "Unable to determine memory usage on this system."
-          fi
-      - name: Enable Core Dumps
-        run: |
-          echo "Enabling core dumps for debugging..."
-          ulimit -c unlimited || echo "ulimit not supported"
-          sysctl -w kern.corefile=/cores/core.%P || echo "sysctl not supported"
       - name: Run integration tests
         run: |
           echo "Running integration tests with mage..."
           mage test:python
         continue-on-error: true
-      - name: Check memory usage after pytest
-        run: |
-          echo "Checking memory usage after tests..."
-          if command -v free > /dev/null; then
-            free -m
-          elif command -v vm_stat > /dev/null; then
-            vm_stat
-            echo "Free memory in MB:"
-            vm_stat | awk '/Pages free/ { print $3 * 4096 / 1024 / 1024 " MB" }'
-          elif command -v sysctl > /dev/null; then
-            echo "Total memory in bytes:"
-            sysctl hw.memsize
-          else
-            echo "Unable to determine memory usage on this system."
-          fi
-      - name: Collect Core Dumps
-        if: failure()
-        run: |
-          echo "Checking for core dumps..."
-          if ls /cores/core.* 1> /dev/null 2>&1; then
-            echo "Core dumps found:"
-            ls -lh /cores/core.*
-          else
-            echo "No core dumps found."
-          fi
-      - name: Debug pytest failures
-        if: failure()
-        run: |
-          echo "Tests failed. Gathering debug information..."
-          pytest --maxfail=5 --tb=short -vv

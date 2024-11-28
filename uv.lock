@@ -903,7 +903,7 @@ wheels = [
 
 [[package]]
 name = "mlflow"
-version = "2.17.3.dev0"
+version = "2.18.1.dev0"
 source = { editable = ".mlflow.repo" }
 dependencies = [
     { name = "alembic" },
@@ -967,7 +967,7 @@ requires-dist = [
     { name = "jinja2", marker = "platform_system != 'Windows'", specifier = ">=2.11,<4" },
     { name = "jinja2", marker = "platform_system == 'Windows'", specifier = ">=3.0,<4" },
     { name = "kubernetes", marker = "extra == 'extras'" },
-    { name = "langchain", marker = "extra == 'langchain'", specifier = ">=0.1.0,<=0.3.3" },
+    { name = "langchain", marker = "extra == 'langchain'", specifier = ">=0.1.0,<=0.3.7" },
     { name = "markdown", specifier = ">=3.3,<4" },
     { name = "matplotlib", specifier = "<4" },
     { name = "mlflow-dbstore", marker = "extra == 'sqlserver'" },
@@ -1008,7 +1008,7 @@ requires-dist = [
 
 [[package]]
 name = "mlflow-go"
-version = "2.14.1"
+version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "cffi" },
