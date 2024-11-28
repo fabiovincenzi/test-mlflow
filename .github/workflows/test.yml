@@ -66,15 +66,11 @@ jobs:
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-       - name: Run integration tests 5
+      - name: Run integration tests 5
         run: |
           echo "Running integration tests with mage..."
           mage test:python
       - name: Run integration tests 6
-        run: |
-          echo "Running integration tests with mage..."
-          mage test:python
-      - name: Run integration tests 7
         run: |
           echo "Running integration tests with mage..."
           mage test:python
