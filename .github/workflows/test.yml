@@ -50,4 +50,19 @@ jobs:
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-        continue-on-error: true
+      - name: Run integration tests 1
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 2
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 3
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 4
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
