@@ -1,6 +1,9 @@
 import json
+import logging
 import os
 import posixpath
+import re
+import shutil
 import subprocess
 import sys
 import threading
@@ -9,6 +12,7 @@ import traceback
 import click
 import pytest
 from mlflow.environment_variables import _MLFLOW_TESTING, MLFLOW_TRACKING_URI
+from mlflow.utils.os import is_windows
 from mlflow.version import VERSION
 
 from tests.helper_functions import get_safe_port
@@ -291,6 +295,47 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
             terminalreporter.section("Remaining child processes", yellow=True)
             for idx, child in enumerate(children, start=1):
                 terminalreporter.write(f"{idx}: {child}\n")
+
+
+logger = logging.getLogger(__name__)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def clean_up_envs():
+    """
+    Clean up virtualenvs and conda environments created during tests to save disk space.
+    """
+    yield
+
+    if "GITHUB_ACTIONS" in os.environ:
+        logger.info("Cleaning up virtual environments...")
+        try:
+            from mlflow.utils.virtualenv import _get_mlflow_virtualenv_root
+
+            mlflow_virtualenv_root = _get_mlflow_virtualenv_root()
+            logger.info(f"Removing virtualenv root: {mlflow_virtualenv_root}")
+            shutil.rmtree(mlflow_virtualenv_root, ignore_errors=True)
+        except Exception as e:
+            logger.error(f"Error while removing virtualenv root: {e}")
+
+        if not is_windows():
+            try:
+                conda_info = json.loads(
+                    subprocess.check_output(["conda", "info", "--json"], text=True)
+                )
+                logger.info(f"Condas info: {conda_info}")
+                root_prefix = conda_info["root_prefix"]
+                regex = re.compile(r"mlflow-\w{32,}")
+                for env in conda_info["envs"]:
+                    if env == root_prefix:
+                        continue
+                    if regex.fullmatch(os.path.basename(env)):
+                        logger.info(f"Removing Conda environment: {env}")
+                        shutil.rmtree(env, ignore_errors=True)
+            except subprocess.CalledProcessError as e:
+                logger.error(f"Error while getting Conda info: {e}")
+            except Exception as e:
+                logger.error(f"Error while cleaning Conda environments: {e}")
 
 
 @pytest.fixture(scope="session", autouse=True)
