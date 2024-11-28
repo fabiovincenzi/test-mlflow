@@ -42,59 +42,215 @@ jobs:
         run: go install github.com/magefile/mage@v1.15.0
       - name: Install our package in editable mode
         run: pip install -e .
-      - name: Install dependencies
+      - name: Install dependencies 
         run: |
           echo "Installing dependencies..."
           pip install pytest==8.1.1 psycopg2-binary==2.9.9 -e .mlflow.repo
-      - name: Run integration tests
+      - name: Run integration tests 20
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 1
+      - name: Run integration tests 21
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 2
+      - name: Run integration tests 22
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 3
+      - name: Run integration tests 23
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 4
+      - name: Run integration tests 24
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 5
+      - name: Run integration tests 25
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 6
+      - name: Run integration tests 26
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 7
+      - name: Run integration tests 27
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 8
+      - name: Run integration tests 28
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 9
+      - name: Run integration tests 29
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 10
+      - name: Run integration tests 210
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 11
+      - name: Run integration tests 211
         run: |
           echo "Running integration tests with mage..."
           mage test:python
-      - name: Run integration tests 12
+      - name: Run integration tests 212
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+        - name: Run integration tests
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 31
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 32
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 33
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 34
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 35
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 36
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 37
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 38
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 39
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 310
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 311
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 312
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 320
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 321
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 322
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 323
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 324
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 325
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 326
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 327
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 328
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 329
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 3210
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 3211
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 3212
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+        - name: Run integration tests3212
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 31
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 32
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 33
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 34
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 35
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 36
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 37
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 38
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 39
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 310
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 311
+        run: |
+          echo "Running integration tests with mage..."
+          mage test:python
+      - name: Run integration tests 312
         run: |
           echo "Running integration tests with mage..."
           mage test:python
