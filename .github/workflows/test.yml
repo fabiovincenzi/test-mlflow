@@ -16,16 +16,10 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install Conda
+      - uses: s-weigand/setup-conda@v1
         if: matrix.runner == 'macos-13'
-        run: |
-          echo "Installing Miniconda..."
-          curl -L -o miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-          chmod +x miniconda.sh
-          ./miniconda.sh -b -p $HOME/miniconda
-          echo "$HOME/miniconda/bin" >> $GITHUB_PATH
-          export PATH="$HOME/miniconda/bin:$PATH"
-          conda --version
+        with:
+          activate-conda: false
       - name: Install uv
         uses: astral-sh/setup-uv@v3
       - name: Setup Python
