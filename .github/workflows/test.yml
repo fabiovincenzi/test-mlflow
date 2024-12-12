@@ -28,6 +28,8 @@ jobs:
           conda --version
       - name: Install uv
         uses: astral-sh/setup-uv@v3
+      - name: Install pytest-faulthandler
+        run: pip install pytest-faulthandler
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
