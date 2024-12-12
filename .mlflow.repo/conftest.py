@@ -229,67 +229,6 @@ def pytest_collection_modifyitems(session, config, items):
     if (splits := config.getoption("--splits")) and (group := config.getoption("--group")):
         items[:] = items[(group - 1) :: splits]
 
-
-@pytest.hookimpl(hookwrapper=True)
-def pytest_terminal_summary(terminalreporter, exitstatus, config):
-    yield
-    failed_test_reports = terminalreporter.stats.get("failed", [])
-    if failed_test_reports:
-        if len(failed_test_reports) <= 30:
-            terminalreporter.section("command to run failed test cases")
-            ids = [repr(report.nodeid) for report in failed_test_reports]
-        else:
-            terminalreporter.section("command to run failed test suites")
-            # Use dict.fromkeys to preserve the order
-            ids = list(dict.fromkeys(report.fspath for report in failed_test_reports))
-        terminalreporter.write(" ".join(["pytest"] + ids))
-        terminalreporter.write("\n" * 2)
-
-        # If some tests failed at installing mlflow, we suggest using `--serve-wheel` flag.
-        # Some test cases try to install mlflow via pip e.g. model loading. They pins
-        # mlflow version to install based on local environment i.e. dev version ahead of
-        # the latest release, hence it's not found on PyPI. `--serve-wheel` flag was
-        # introduced to resolve this issue, which starts local PyPI server and serve
-        # an mlflow wheel based on local source code.
-        # Ref: https://github.com/mlflow/mlflow/pull/10247
-        msg = f"No matching distribution found for mlflow=={VERSION}"
-        for rep in failed_test_reports:
-            if any(msg in t for t in (rep.longreprtext, rep.capstdout, rep.capstderr)):
-                terminalreporter.section("HINTS", yellow=True)
-                terminalreporter.write(
-                    f"Found test(s) that failed with {msg!r}. Adding"
-                    " --serve-wheel` flag to your pytest command may help.\n\n",
-                    yellow=True,
-                )
-                break
-
-    main_thread = threading.main_thread()
-    if threads := [t for t in threading.enumerate() if t is not main_thread]:
-        terminalreporter.section("Remaining threads", yellow=True)
-        for idx, thread in enumerate(threads, start=1):
-            terminalreporter.write(f"{idx}: {thread}\n")
-
-        if non_daemon_threads := [t for t in threads if not t.daemon]:
-            frames = sys._current_frames()
-            terminalreporter.section("Tracebacks of non-daemon threads", yellow=True)
-            for thread in non_daemon_threads:
-                thread.join(timeout=1)
-                if thread.is_alive() and (frame := frames.get(thread.ident)):
-                    terminalreporter.section(repr(thread), sep="~")
-                    terminalreporter.write("".join(traceback.format_stack(frame)))
-
-    try:
-        import psutil
-    except ImportError:
-        pass
-    else:
-        current_process = psutil.Process()
-        if children := current_process.children(recursive=True):
-            terminalreporter.section("Remaining child processes", yellow=True)
-            for idx, child in enumerate(children, start=1):
-                terminalreporter.write(f"{idx}: {child}\n")
-
-
 @pytest.fixture(scope="session", autouse=True)
 def enable_mlflow_testing():
     with pytest.MonkeyPatch.context() as mp:
