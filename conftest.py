@@ -1,6 +1,9 @@
 import logging
 import pathlib
 from unittest.mock import patch
+import faulthandler
+
+faulthandler.enable()
 
 _logger = logging.getLogger(__name__)
 
