@@ -27,7 +27,7 @@ jobs:
           export PATH="$HOME/miniconda/bin:$PATH"
           conda --version
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@v4
       - name: Install pytest-faulthandler
         run: pip install pytest-faulthandler
       - name: Setup Python
