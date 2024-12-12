@@ -100,7 +100,7 @@ func (Test) Python() error {
 		"MLFLOW_GO_LIBRARY_PATH": libpath,
 	}
 
-	if err := sh.RunWithV(testEnv, "python -X faulthandler -m pytest",
+	if err := sh.RunWithV(testEnv, "pytest",
 		"--confcutdir=.",
 		".mlflow.repo/tests/tracking/test_rest_tracking.py",
 		".mlflow.repo/tests/tracking/test_model_registry.py",
