@@ -1,7 +1,15 @@
 import pytest
 from mlflow.exceptions import MlflowException
 from mlflow.store.tracking.sqlalchemy_store import SqlAlchemyStore
+import faulthandler
 
+@pytest.fixture(scope="session", autouse=True)
+def enable_faulthandler():
+    import sys
+    faulthandler.enable()
+    yield
+    faulthandler.dump_traceback(sys.stderr)
+     
 def test_search_experiments_filter_by_time_attribute(store: SqlAlchemyStore):
      ()
 
